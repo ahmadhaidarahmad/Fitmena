@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 
-import { SmartTableData } from '../../../@core/data/smart-table';
+import { SmartTableData, Ticker } from '../../../@core/data/smart-table';
+import { SmartTableService } from '../../../@core/mock/smart-table.service';
 
 @Component({
   selector: 'ngx-smart-table',
   templateUrl: './smart-table.component.html',
   styleUrls: ['./smart-table.component.scss'],
 })
-export class SmartTableComponent {
+export class SmartTableComponent implements OnInit {
 
   settings = {
     add: {
@@ -26,45 +27,68 @@ export class SmartTableComponent {
       confirmDelete: true,
     },
     columns: {
-      id: {
-        title: 'ID',
-        type: 'number',
-      },
-      firstName: {
-        title: 'First Name',
+      ticker: {
+        title: 'Ticker',
         type: 'string',
       },
-      lastName: {
-        title: 'Last Name',
+      name: {
+        title: 'Name',
         type: 'string',
       },
-      username: {
-        title: 'Username',
+      market: {
+        title: 'Market',
         type: 'string',
       },
-      email: {
-        title: 'E-mail',
+      locale: {
+        title: 'Locale',
         type: 'string',
       },
-      age: {
-        title: 'Age',
-        type: 'number',
+      type: {
+        title: 'Type',
+        type: 'string',
+      },
+      currency: {
+        title: 'Currency',
+        type: 'string',
+      },
+      active: {
+        title: 'Active',
+        type: 'string',
+      },
+      primaryExch: {
+        title: 'Primary Exchange',
+        type: 'string',
+      },
+      updated: {
+        title: 'Updated At',
+        type: 'string',
       },
     },
   };
 
   source: LocalDataSource = new LocalDataSource();
+  tickers: Ticker[] = [];
 
-  constructor(private service: SmartTableData) {
-    const data = this.service.getData();
-    this.source.load(data);
+  constructor(private service: SmartTableService) {
+    //const data: Ticker[] = this.service.getTickers();
   }
 
-  onDeleteConfirm(event): void {
+  ngOnInit() {
+    this.service.getTickers().subscribe(data => {
+          this.tickers = data['tickers'];
+          // tslint:disable-next-line: no-console
+          console.log(this.tickers);
+          this.source.load(this.tickers);
+        });
+
+
+
+  }
+/*   onDeleteConfirm(event): void {
     if (window.confirm('Are you sure you want to delete?')) {
       event.confirm.resolve();
     } else {
       event.confirm.reject();
     }
-  }
+  } */
 }
